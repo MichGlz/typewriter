@@ -2,12 +2,19 @@
 
 let maxLimit;
 let myString;
+let myLine;
 let i = 0;
 let audioX = 2;
+let noTextos;
+let noTimes = 1;
+let textIndex = 1;
 
 let myH1 = document.querySelector("#typewriter");
 let myTextos = document.querySelectorAll(".typewritten");
 const myButton = document.querySelector("#startType");
+const paper = document.querySelector(".paper");
+
+//----------sounds-------------------
 const typekey1 = document.querySelector("#typekey1");
 const typekey2 = document.querySelector("#typekey2");
 const typekey3 = document.querySelector("#typekey3");
@@ -18,35 +25,73 @@ const typekey7 = document.querySelector("#typekey7");
 const typekey8 = document.querySelector("#typekey8");
 const typespace = document.querySelector("#typespace");
 const typelast = document.querySelector("#typelast");
+//---------------------------------
 
-myButton.addEventListener("click", init);
+initV2();
 
-maxLimit = myH1.textContent.length;
-myString = myH1.textContent;
-myH1.textContent = "";
+function initV2() {
+  noTextos = myTextos.length;
+  console.log("initV2" + noTextos);
+  let elementIndex = 1;
+  myTextos.forEach((eText) => {
+    localStorage.setItem(`maxLimit${elementIndex}`, `${eText.textContent.length}`);
+    localStorage.setItem(`myString${elementIndex}`, `${eText.textContent}`);
+    eText.textContent = "";
+    let h1 = document.createElement("H1");
+    h1.classList.add(`line${elementIndex}`);
+    paper.appendChild(h1);
+    elementIndex++;
+  });
 
-// initV2();
+  // myH1.textContent = "";
+  myButton.addEventListener("click", initTyping);
+}
 
-// function initV2() {
-//   myTexts.forEach((eText) => {
-//     maxLimit = eText.textContent.length;
-//     myString = eText.textContent;
-//     eText.textContent = "";
-//     console.log(maxLimit);
-//     myLoop();
-//   });
+// function init() {
+//   console.log(maxLimit);
+//   typekey1.currentTime = 0.2;
+//   typekey1.play();
+//   maxLimit = myH1.textContent.length;
+//   myString = myH1.textContent;
+//   myLoop();
 // }
 
-function init() {
+function initTyping() {
+  console.log("initTyping");
+  maxLimit = localStorage.getItem(`maxLimit${textIndex}`);
   console.log(maxLimit);
-  typekey1.currentTime = 0.2;
-  typekey1.play();
+  myString = localStorage.getItem(`myString${textIndex}`);
+  myLine = document.querySelector(`.line${textIndex}`);
+  console.log(myString);
+  i = 0;
   myLoop();
 }
 
 function myLoop() {
+  playSound();
+  console.log(myString[i]);
+
+  myLine.textContent += myString[i];
+
+  i++;
+
+  if (i < maxLimit) {
+    setTimeout(myLoop, 200);
+  } else {
+    typelast.play();
+    typelast.addEventListener("ended", () => {
+      cleanLocalStorage();
+      if (textIndex < noTextos) {
+        textIndex++;
+        initTyping();
+      }
+    });
+  }
+}
+
+function playSound() {
   audioX = Math.floor(Math.random() * 8) + 1;
-  console.log(audioX);
+
   if (myString[i] === " ") {
     typespace.play();
   } else if (audioX === 1) {
@@ -74,15 +119,13 @@ function myLoop() {
     typekey8.currentTime = 0;
     typekey8.play();
   }
+}
 
-  myH1.textContent += myString[i];
-  i++;
-
-  if (i < maxLimit) {
-    console.log(myString[i]);
-
-    setTimeout(myLoop, 200);
-  } else {
-    typelast.play();
-  }
+function cleanLocalStorage() {
+  localStorage.removeItem(`maxLimit${textIndex}`);
+  localStorage.removeItem(`myString${textIndex}`);
+  // noTimes++;
+  // if (noTimes <= noTextos) {
+  //   cleanLocalStorage();
+  // }
 }
