@@ -33,12 +33,28 @@ function initV2() {
   console.log("initV2 no. textos " + noTextos);
   let elementIndex = 1;
   myTextos.forEach((eText) => {
-    localStorage.setItem(`myString${elementIndex}`, `${eText.textContent}`);
-    let h1 = document.createElement("H1");
-    h1.classList.add(`line${elementIndex}`);
-    paper.appendChild(h1);
-    eText.textContent = "";
-    elementIndex++;
+    //------check for <br>------
+    if (eText.innerHTML.includes("<br>")) {
+      console.log("elemento " + elementIndex + " have <br>");
+      let subText = eText.innerHTML.split("<br>");
+      noTextos = noTextos + subText.length - 1;
+      console.log("new noTextos" + noTextos);
+      subText.forEach((eSubText) => {
+        localStorage.setItem(`myString${elementIndex}`, `${eSubText}`);
+        let h1 = document.createElement("H1");
+        h1.classList.add(`line${elementIndex}`);
+        paper.appendChild(h1);
+        elementIndex++;
+      });
+      eText.textContent = "";
+    } else {
+      localStorage.setItem(`myString${elementIndex}`, `${eText.textContent}`);
+      let h1 = document.createElement("H1");
+      h1.classList.add(`line${elementIndex}`);
+      paper.appendChild(h1);
+      eText.textContent = "";
+      elementIndex++;
+    }
   });
 
   myButton.addEventListener("click", initTyping);
