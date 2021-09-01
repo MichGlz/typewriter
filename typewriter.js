@@ -3,14 +3,13 @@
 let maxLimit;
 let myString;
 let myLine;
-let i = 0;
+let i;
 let audioX = 2;
 let noTextos;
 let noTimes = 1;
-let textIndex = 1;
+let textIndex = 0;
 
-let myH1 = document.querySelector("#typewriter");
-let myTextos = document.querySelectorAll(".typewritten");
+const myTextos = document.querySelectorAll(".typewritten");
 const myButton = document.querySelector("#startType");
 const paper = document.querySelector(".paper");
 
@@ -31,38 +30,28 @@ initV2();
 
 function initV2() {
   noTextos = myTextos.length;
-  console.log("initV2" + noTextos);
+  console.log("initV2 no. textos " + noTextos);
   let elementIndex = 1;
   myTextos.forEach((eText) => {
-    localStorage.setItem(`maxLimit${elementIndex}`, `${eText.textContent.length}`);
     localStorage.setItem(`myString${elementIndex}`, `${eText.textContent}`);
-    eText.textContent = "";
     let h1 = document.createElement("H1");
     h1.classList.add(`line${elementIndex}`);
     paper.appendChild(h1);
+    eText.textContent = "";
     elementIndex++;
   });
 
-  // myH1.textContent = "";
   myButton.addEventListener("click", initTyping);
 }
 
-// function init() {
-//   console.log(maxLimit);
-//   typekey1.currentTime = 0.2;
-//   typekey1.play();
-//   maxLimit = myH1.textContent.length;
-//   myString = myH1.textContent;
-//   myLoop();
-// }
-
 function initTyping() {
   console.log("initTyping");
-  maxLimit = localStorage.getItem(`maxLimit${textIndex}`);
-  console.log(maxLimit);
+  textIndex++;
   myString = localStorage.getItem(`myString${textIndex}`);
-  myLine = document.querySelector(`.line${textIndex}`);
   console.log(myString);
+  maxLimit = myString.length;
+  console.log(maxLimit);
+  myLine = document.querySelector(`.line${textIndex}`);
   i = 0;
   myLoop();
 }
@@ -76,16 +65,10 @@ function myLoop() {
   i++;
 
   if (i < maxLimit) {
-    setTimeout(myLoop, 200);
+    setTimeout(myLoop, 150);
   } else {
     typelast.play();
-    typelast.addEventListener("ended", () => {
-      cleanLocalStorage();
-      if (textIndex < noTextos) {
-        textIndex++;
-        initTyping();
-      }
-    });
+    typelast.addEventListener("ended", cleanLocalStorage);
   }
 }
 
@@ -124,8 +107,7 @@ function playSound() {
 function cleanLocalStorage() {
   localStorage.removeItem(`maxLimit${textIndex}`);
   localStorage.removeItem(`myString${textIndex}`);
-  // noTimes++;
-  // if (noTimes <= noTextos) {
-  //   cleanLocalStorage();
-  // }
+  if (textIndex < noTextos) {
+    initTyping();
+  }
 }
