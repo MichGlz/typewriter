@@ -40,7 +40,7 @@ function initV2() {
       noTextos = noTextos + subText.length - 1;
       console.log("new noTextos" + noTextos);
       subText.forEach((eSubText) => {
-        localStorage.setItem(`myString${elementIndex}`, `${eSubText}`);
+        localStorage.setItem(`myString${elementIndex}`, `${eSubText.trim()}`);
         let h1 = document.createElement("H1");
         h1.classList.add(`line${elementIndex}`);
         paper.appendChild(h1);
